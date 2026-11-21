@@ -4,6 +4,8 @@ on:
     branches: [main]
   workflow_dispatch:
 
+# Re-trigger CI after battery layout adjustment.
+
 permissions:
   contents: read
 
