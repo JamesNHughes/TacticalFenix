@@ -1,0 +1,31 @@
+name: Garmin Connect IQ Build
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check signing key
+        env:
+          KEY: ${{ secrets.GARMIN_DEVELOPER_KEY_BASE64 }}
+        run: |
+          if [ -z "$KEY" ]; then
+            echo "::error::Set repository secret GARMIN_DEVELOPER_KEY_BASE64 to the base64 of your Garmin developer_key.der"
+            exit 1
+          fi
+          echo "$KEY" | base64 -d > developer_key.der
+      - name: Download Connect IQ SDK manager
+        run: |
+          echo "::error::SDK installation and device toolchain selection still need validation; this workflow is a scaffold, not a successful build."
+          exit 1
+      - name: Compile
+        if: ${{ success() }}
+        run: monkeyc -f monkey.jungle -d fenix7xpro -o TacticalFenix.prg -y developer_key.der
+      - uses: actions/upload-artifact@v4
+        if: ${{ success() }}
+        with:
+          name: TacticalFenix-prg
+          path: TacticalFenix.prg
