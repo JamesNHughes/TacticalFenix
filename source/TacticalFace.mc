@@ -27,18 +27,32 @@ class TacticalFace extends Ui.WatchFace {
         var today = Greg.info(Time.now(), Time.FORMAT_SHORT);
         var timeText = now.hour.format("%02d") + ":" + now.min.format("%02d");
         var dateText = DAYS[today.day_of_week-1] + " " + today.day.format("%02d") + " " + MONTHS[today.month-1];
-        line(dc,sx,sy,76,31,204,31,ac,2);
-        line(dc,sx,sy,76,31,65,43,ac,2);
-        line(dc,sx,sy,204,31,215,43,ac,2);
-        line(dc,sx,sy,65,43,76,55,ac,2);
-        line(dc,sx,sy,215,43,204,55,ac,2);
-        line(dc,sx,sy,76,55,204,55,ac,2);
-        dc.setColor(bc,Gfx.COLOR_TRANSPARENT);
+        // Enlarged battery group with a shared vertical centre; no surrounding frame.
         var bat = Sys.getSystemStats().battery.toNumber();
-        dc.drawRectangle((83*sx).toNumber(),(37*sy).toNumber(),(29*sx).toNumber(),(13*sy).toNumber());
-        dc.fillRectangle((113*sx).toNumber(),(41*sy).toNumber(),(3*sx).toNumber(),(5*sy).toNumber());
-        dc.fillRectangle((85*sx).toNumber(),(39*sy).toNumber(),((25*bat/100)*sx).toNumber(),(9*sy).toNumber());
-        dc.drawText((123*sx).toNumber(),(32*sy).toNumber(),Gfx.FONT_MEDIUM,bat.format("%d")+"%",Gfx.TEXT_JUSTIFY_LEFT);
+        var batteryText = bat.format("%d") + "%";
+        var batteryFont = Gfx.FONT_LARGE;
+        var batteryTextWidth = dc.getTextWidthInPixels(batteryText, batteryFont);
+        var batteryTextHeight = dc.getFontHeight(batteryFont);
+        var iconW = (42*sx).toNumber();
+        var iconH = (21*sy).toNumber();
+        var gap = (11*sx).toNumber();
+        var tipW = (5*sx).toNumber();
+        var groupW = iconW + tipW + gap + batteryTextWidth;
+        var iconX = ((w-groupW)/2).toNumber();
+        var centreY = (46*sy).toNumber();
+        var iconY = (centreY-iconH/2).toNumber();
+        dc.setColor(bc,Gfx.COLOR_TRANSPARENT);
+        // Battery symbol only: outline is part of the battery, not a panel.
+        dc.setPenWidth(2);
+        dc.drawRectangle(iconX,iconY,iconW,iconH);
+        dc.fillRectangle(iconX+iconW,iconY+(iconH/3).toNumber(),tipW,(iconH/3).toNumber());
+        var fillW = ((iconW-6)*bat/100).toNumber();
+        if (fillW > 0) {
+            dc.fillRectangle(iconX+3,iconY+3,fillW,iconH-6);
+        }
+        dc.drawText(iconX+iconW+tipW+gap,
+                    centreY-(batteryTextHeight/2).toNumber(),
+                    batteryFont,batteryText,Gfx.TEXT_JUSTIFY_LEFT);
         dc.setColor(tc,Gfx.COLOR_TRANSPARENT);
         dc.drawText((140*sx).toNumber(),(77*sy).toNumber(),Gfx.FONT_NUMBER_HOT,(timeText),Gfx.TEXT_JUSTIFY_CENTER);
         line(dc,sx,sy,29,166,251,166,ac,3);
