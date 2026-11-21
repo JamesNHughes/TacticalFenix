@@ -40,7 +40,7 @@ class TacticalFace extends Ui.WatchFace {
         dc.fillRectangle((85*sx).toNumber(),(39*sy).toNumber(),((25*bat/100)*sx).toNumber(),(9*sy).toNumber());
         dc.drawText((123*sx).toNumber(),(32*sy).toNumber(),Gfx.FONT_MEDIUM,bat.format("%d")+"%",Gfx.TEXT_JUSTIFY_LEFT);
         dc.setColor(tc,Gfx.COLOR_TRANSPARENT);
-        dc.drawText((140*sx).toNumber(),(77*sy).toNumber(),Gfx.FONT_NUMBER_THAI_HOT,(timeText),Gfx.TEXT_JUSTIFY_CENTER);
+        dc.drawText((140*sx).toNumber(),(77*sy).toNumber(),Gfx.FONT_NUMBER_HOT,(timeText),Gfx.TEXT_JUSTIFY_CENTER);
         line(dc,sx,sy,29,166,251,166,ac,3);
         dc.setColor(dt,Gfx.COLOR_TRANSPARENT);
         dc.drawText((140*sx).toNumber(),(193*sy).toNumber(),Gfx.FONT_LARGE,dateText,Gfx.TEXT_JUSTIFY_CENTER);
