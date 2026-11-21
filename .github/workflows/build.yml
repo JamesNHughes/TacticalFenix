@@ -33,6 +33,23 @@ jobs:
             openssl pkcs8 -topk8 -inform PEM -outform DER -in "$RUNNER_TEMP/temporary.pem" -out "$RUNNER_TEMP/developer_key.der" -nocrypt
             echo "::warning::Temporary signing key: build is for testing only; set GARMIN_DEVELOPER_KEY_BASE64 for stable updates"
           fi
+      - name: Generate launcher icon
+        run: |
+          python3 - <<'PY'
+          import struct,zlib
+          w=h=80
+          rows=[]
+          for y in range(h):
+              row=bytearray([0])
+              for x in range(w):
+                  border=(x<4 or x>=76 or y<4 or y>=76)
+                  row.extend((255,136,0) if border else (0,0,0))
+              rows.append(bytes(row))
+          def chunk(t,d):
+              return struct.pack('>I',len(d))+t+d+struct.pack('>I',zlib.crc32(t+d)&0xffffffff)
+          png=b'\\x89PNG\\r\\n\\x1a\\n'+chunk(b'IHDR',struct.pack('>2I5B',w,h,8,2,0,0,0))+chunk(b'IDAT',zlib.compress(b''.join(rows)))+chunk(b'IEND',b'')
+          open('resources/drawables/icon.png','wb').write(png)
+          PY
       - name: Compile Tactical Fenix
         run: |
           mkdir -p bin
